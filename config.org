@@ -1,3 +1,35 @@
+#+TITLE: Abbes emacs config
+#+AUTHOR: Albin Forsberg
+
+* Table of Content :toc:
+- [[#setup][Setup]]
+  - [[#set-default-encoding-to-utf-8][Set Default Encoding to UTF-8]]
+  - [[#start-in-fullscreen][Start in Fullscreen]]
+  - [[#set-theme][Set theme]]
+  - [[#backup-dir][Backup dir]]
+  - [[#package-manager][Package Manager]]
+- [[#user-interface][User Interface]]
+  - [[#load-evil-mode][Load Evil Mode]]
+  - [[#which-key][Which Key]]
+  - [[#keybindings][Keybindings]]
+  - [[#all-the-icons][All the Icons]]
+  - [[#ivy][Ivy]]
+  - [[#dashboard][Dashboard]]
+  - [[#modeline][Modeline]]
+- [[#fonts][Fonts]]
+- [[#graphics][Graphics]]
+  - [[#setup-1][Setup]]
+  - [[#line-numbers][Line Numbers]]
+- [[#org-mode][Org Mode]]
+  - [[#table-of-contents][Table of Contents]]
+  - [[#bullets][Bullets]]
+  - [[#disable-electric-indent][Disable Electric Indent]]
+  - [[#org-tempo][Org Tempo]]
+- [[#software-development][Software Development]]
+  - [[#treesitter][Treesitter]]
+  - [[#language-servers][Language servers]]
+  - [[#magit][Magit]]
+
 * Setup
 ** Set Default Encoding to UTF-8
 This section configures Emacs to use UTF-8 as the default encoding.
