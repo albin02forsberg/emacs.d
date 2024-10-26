@@ -1,35 +1,3 @@
-#+TITLE: Abbes Emacs Config
-#+AUTHOR: Albin Forsberg
-#+STARTUP: showeverything
-#+OPTIONS: toc:2
-
-* Table of Contents :toc:
-- [[#setup][Setup]]
-  - [[#set-default-encoding-to-utf-8][Set Default Encoding to UTF-8]]
-  - [[#start-in-fullscreen][Start in Fullscreen]]
-  - [[#package-manager][Package Manager]]
-- [[#user-interface][User Interface]]
-  - [[#load-evil-mode][Load Evil Mode]]
-  - [[#which-key][Which Key]]
-  - [[#keybindings][Keybindings]]
-  - [[#all-the-icons][All the Icons]]
-  - [[#ivy][Ivy]]
-  - [[#dashboard][Dashboard]]
-  - [[#modeline][Modeline]]
-- [[#fonts][Fonts]]
-- [[#graphics][Graphics]]
-  - [[#setup-1][Setup]]
-  - [[#line-numbers][Line Numbers]]
-- [[#org-mode][Org Mode]]
-  - [[#table-of-contents][Table of Contents]]
-  - [[#bullets][Bullets]]
-  - [[#disable-electric-indent][Disable Electric Indent]]
-  - [[#org-tempo][Org Tempo]]
-- [[#software-development][Software Development]]
-  - [[#language-servers][Language Servers]]
-  - [[#magit][Magit]]
-  - [[#magit-1][Magit]]
-
 * Setup
 ** Set Default Encoding to UTF-8
 This section configures Emacs to use UTF-8 as the default encoding.
@@ -43,71 +11,81 @@ This section configures Emacs to use UTF-8 as the default encoding.
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+end_src
 
+** Set theme
+#+begin_src emacs-lisp
+(load-theme 'tango-dark t)
+#+end_src
+
+** Backup dir
+#+begin_src emacs-lisp
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+#+end_src
+
 ** Package Manager
 This section configures Elpaca, a package manager for Emacs, enabling easy package management.
-*** Install Elpaca
-Initializes Elpaca by defining its directories and the order of packages to install.
+*** Package
 #+begin_src emacs-lisp
-(defvar elpaca-installer-version 0.7)
-(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
-(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
-(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                               :ref nil
-                               :files (:defaults (:exclude "extensions"))
-                               :build (:not elpaca--activate-package)))
+  (defvar elpaca-installer-version 0.7)
+  (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+  (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+  (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+  (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                                 :ref nil
+                                 :files (:defaults (:exclude "extensions"))
+                                 :build (:not elpaca--activate-package)))
 
-(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-       (build (expand-file-name "elpaca/" elpaca-builds-directory))
-       (order (cdr elpaca-order))
-       (default-directory repo))
-  (add-to-list 'load-path (if (file-exists-p build) build repo))
-  (unless (file-exists-p repo)
-    (make-directory repo t)
-    (when (< emacs-major-version 28) (require 'subr-x))
-    (condition-case-unless-debug err
-      (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-               ((zerop (call-process "git" nil buffer t "clone"
-                                     (plist-get order :repo) repo)))
-               ((zerop (call-process "git" nil buffer t "checkout"
-                                     (or (plist-get order :ref) "--"))))
-               (emacs (concat invocation-directory invocation-name))
-               ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-                                     "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-               ((require 'elpaca))
-               ((elpaca-generate-autoloads "elpaca" repo)))
-          (kill-buffer buffer)
-        (error "%s" (with-current-buffer buffer (buffer-string))))
-    ((error) (warn "%s" err) (delete-directory repo 'recursive))))
-  (unless (require 'elpaca-autoloads nil t)
-    (require 'elpaca)
-    (elpaca-generate-autoloads "elpaca" repo)
-    (load "./elpaca-autoloads")))
-(add-hook 'after-init-hook #'elpaca-process-queues)
-(elpaca `(,@elpaca-order))
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
+  (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+         (build (expand-file-name "elpaca/" elpaca-builds-directory))
+         (order (cdr elpaca-order))
+         (default-directory repo))
+    (add-to-list 'load-path (if (file-exists-p build) build repo))
+    (unless (file-exists-p repo)
+      (make-directory repo t)
+      (when (< emacs-major-version 28) (require 'subr-x))
+      (condition-case-unless-debug err
+        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                 ((zerop (call-process "git" nil buffer t "clone"
+                                       (plist-get order :repo) repo)))
+                 ((zerop (call-process "git" nil buffer t "checkout"
+                                       (or (plist-get order :ref) "--"))))
+                 (emacs (concat invocation-directory invocation-name))
+                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                 ((require 'elpaca))
+                 ((elpaca-generate-autoloads "elpaca" repo)))
+            (kill-buffer buffer)
+          (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+    (unless (require 'elpaca-autoloads nil t)
+      (require 'elpaca)
+      (elpaca-generate-autoloads "elpaca" repo)
+      (load "./elpaca-autoloads")))
+  (add-hook 'after-init-hook #'elpaca-process-queues)
+  (elpaca `(,@elpaca-order))
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (package-initialize)
 #+end_src
 
 *** Windows Support
 Configuration to ensure compatibility with Windows systems that may have issues with symlinks.
 #+begin_src emacs-lisp
-;; Uncomment for systems that cannot create symlinks
-(elpaca-no-symlink-mode)
+  ;; Uncomment for systems that cannot create symlinks
+  (elpaca-no-symlink-mode)
 #+end_src
 
 *** Set Elpaca as Package Manager
 Sets up support for `use-package` with Elpaca.
 #+begin_src emacs-lisp
-	    (elpaca elpaca-use-package
- (elpaca-use-package-mode)
-	      (setq elpaca-use-package-by-default t)
-(setq use-package-always-ensure t))
+              (elpaca elpaca-use-package
+   (elpaca-use-package-mode)
+                (setq elpaca-use-package-by-default t)
+  (setq use-package-always-ensure t))
 
-	(elpaca-wait) ;; Block until the current queue is processed.
-(use-package emacs :ensure nil :config (setq ring-bell-function #'ignore))
+  (elpaca-wait) ;; Block until the current queue is processed.
+  (use-package emacs :ensure nil :config (setq ring-bell-function #'ignore))
 #+end_src
+
 
 * User Interface
 ** Load Evil Mode
@@ -120,12 +98,11 @@ Configures Evil mode, a Vim emulation layer for Emacs.
         evil-vsplit-window-right t
         evil-split-window-below t)
   (evil-mode))  ;; Enable Evil mode.
-(elpaca-wait)   ;; Wait for installation to finish.
 
 (use-package evil-collection
   :after evil
   :config
-  (setq evil-collection-mode-list '(dashboard dired ibuffer))
+  (setq evil-collection-mode-list '(dashboard dired ibuffer magit))
   (evil-collection-init))
 #+end_src
 
@@ -152,25 +129,25 @@ Configures `which-key` to display available keybindings contextually.
 ** Keybindings
 Customizes keybindings for various modes using `general`.
 #+begin_src emacs-lisp
-(use-package general
-  :config
-  (general-evil-setup)
+;;(use-package general
+ ;; :config
+ ;; (general-evil-setup)
 
   ;; Set up 'SPC' as the global leader key.
-  (general-create-definer dt/leader-keys
-    :states '(normal insert visual emacs)
-    :keymaps 'override
-    :prefix "SPC"  ;; Leader prefix
-    :global-prefix "M-SPC")  ;; Access leader in insert mode
+;;  (general-create-definer dt/leader-keys
+ ;;   :states '(normal insert visual emacs)
+  ;;  :keymaps 'override
+  ;;  :prefix "SPC"  ;; Leader prefix
+  ;;  :global-prefix "M-SPC")  ;; Access leader in insert mode
 
-  (dt/leader-keys
-    "b" '(:ignore t :wk "buffer")
-    "bb" '(switch-to-buffer :wk "Switch buffer")
-    "bk" '(kill-this-buffer :wk "Kill this buffer")
-    "bn" '(next-buffer :wk "Next buffer")
-    "bp" '(previous-buffer :wk "Previous buffer")
-    "br" '(revert-buffer :wk "Reload buffer"))
-)
+  ;;(dt/leader-keys
+  ;;  "b" '(:ignore t :wk "buffer")
+  ;;  "bb" '(switch-to-buffer :wk "Switch buffer")
+  ;;  "bk" '(kill-this-buffer :wk "Kill this buffer")
+  ;;  "bn" '(next-buffer :wk "Next buffer")
+  ;;  "bp" '(previous-buffer :wk "Previous buffer")
+  ;;  "br" '(revert-buffer :wk "Reload buffer"))
+;;)
 #+end_src
 
 ** All the Icons
@@ -187,10 +164,31 @@ Sets up the display of icons in Emacs.
 ** Ivy
 Configuration for Ivy, a completion framework.
 #+begin_src emacs-lisp
+(use-package counsel
+  :after ivy
+  :diminish
+  :config 
+    (counsel-mode)
+   (setq ivy-initial-inputs-alist nil)) ;; removes starting ^ regex in M-x
+
 (use-package ivy
   :ensure t
   :config
   (ivy-mode 1))
+
+(use-package all-the-icons-ivy-rich
+  :ensure t
+  :init (all-the-icons-ivy-rich-mode 1))
+
+(use-package ivy-rich
+  :after ivy
+  :ensure t
+  :init (ivy-rich-mode 1) ;; this gets us descriptions in M-x.
+  :custom
+  (ivy-virtual-abbreviate 'full
+   ivy-rich-switch-buffer-align-virtual-buffer t
+   ivy-rich-path-style 'abbrev)
+ :config)
 #+end_src
 
 ** Dashboard
@@ -226,7 +224,7 @@ Configures the Doom modeline for a more informative display.
   :init (doom-modeline-mode 1)
   :config
   (setq doom-modeline-height 35      ;; Sets modeline height.
-        doom-modeline-bar-width 5    ;; Sets right bar width.
+       doom-modeline-bar-width 5    ;; Sets right bar width.
         doom-modeline-persp-name t   ;; Adds perspective name to modeline.
         doom-modeline-persp-icon t))  ;; Adds folder icon next to perspective name.
 #+end_src
@@ -305,41 +303,33 @@ Sets up Org tempo for faster text expansion.
 #+end_src
 
 * Software Development
-** Language Servers
-Configuration for setting up language servers for various programming languages.
+** Treesitter
 #+begin_src emacs-lisp
-;; Add your language server configurations here.
+(use-package tree-sitter)
+#+end_src
+** Language servers
+*** elgot
+#+begin_src emacs-lisp
+   (use-package lsp-mode
+    :init
+    ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+    (setq lsp-keymap-prefix "C-c l")
+    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+           (python-mode . lsp)
+  (typescript-mode . lsp)
+           ;; if you want which-key integration
+           (lsp-mode . lsp-enable-which-key-integration))
+    :commands lsp)
+  (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+  (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 #+end_src
 
 ** Magit
 Configuration for Magit, the Git interface for Emacs.
-** Magit
-Configuration for Magit, the Git interface for Emacs.
 #+begin_src emacs-lisp
-(defun +elpaca-unload-seq (e)
-  (and (featurep 'seq) (unload-feature 'seq t))
-  (elpaca--continue-build e))
-
-(defun +elpaca-seq-build-steps ()
-  (append (butlast (if (file-exists-p (expand-file-name "seq" elpaca-builds-directory))
-                       elpaca--pre-built-steps elpaca-build-steps))
-          (list '+elpaca-unload-seq 'elpaca--activate-package)))
-
-(use-package seq
-  :elpaca `(seq :build ,(+elpaca-seq-build-steps)))
-
-(defun +elpaca-unload-transient (e)
-  (and (featurep 'transient) (unload-feature 'transient t))
-  (elpaca--continue-build e))
-
-(defun +elpaca-transient-build-steps ()
-  (append (butlast (if (file-exists-p (expand-file-name "transient" elpaca-builds-directory))
-                       elpaca--pre-built-steps elpaca-build-steps))
-          (list '+elpaca-unload-transient 'elpaca--activate-package)))
-
-(use-package transient
-  :elpaca `(transient :build ,(+elpaca-transient-build-steps)))
-
-(use-package magit
-  :after (seq transient))
+    (use-package transient
+  :defer t
+  )
+  (use-package magit)
 #+end_src
+
