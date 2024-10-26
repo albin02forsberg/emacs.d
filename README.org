@@ -2,3 +2,19 @@
 #+AUTHOR: Albin Forsberg
 
 * Emacs config
+
+** Philosophy
++ Should be able to run on windows, mac and linux
++ Be fast
++ Easy to modify
++ Vanilla emacs feel (except evil)
+
+** ~init.el~
+The init file reads from ~config.org~
+
+#+begin_src emacs-lisp
+(org-babel-load-file
+ (expand-file-name
+  "config.org"
+ user-emacs-directory))
+#+end_src
