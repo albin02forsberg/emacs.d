@@ -1,3 +1,4 @@
 #+TITLE: Abbes config README
+#+AUTHOR: Albin Forsberg
 
 * Emacs config
