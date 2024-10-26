@@ -8,3 +8,6 @@ server
 auto-save-list
 backups
 .cache
+.lsp-session*
+#*
+bookmarks
