@@ -27,6 +27,8 @@
   - [[#org-tempo][Org Tempo]]
 - [[#software-development][Software Development]]
   - [[#treesitter][Treesitter]]
+  - [[#company-mode][Company mode]]
+  - [[#flycheck][Flycheck]]
   - [[#language-servers][Language servers]]
   - [[#magit][Magit]]
 
@@ -339,22 +341,47 @@ Sets up Org tempo for faster text expansion.
 #+begin_src emacs-lisp
 (use-package tree-sitter)
 #+end_src
-** Language servers
-*** elgot
+
+** Company mode
 #+begin_src emacs-lisp
-   (use-package lsp-mode
-    :init
-    ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-    (setq lsp-keymap-prefix "C-c l")
-    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-           (python-mode . lsp)
-  (typescript-mode . lsp)
-           ;; if you want which-key integration
-           (lsp-mode . lsp-enable-which-key-integration))
-    :commands lsp)
-  (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-  (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+(use-package company
+  :hook (after-init . global-company-mode)
+  :config
+  (setq company-minimum-prefix-length 1)
+  (setq company-idle-delay 0.0))
 #+end_src
+
+** Flycheck
+#+begin_src emacs-lisp
+(use-package flycheck
+  :init (global-flycheck-mode))
+#+end_src
+
+** Language servers
+*** lsp mode 
+**** Setup
+#+begin_src emacs-lisp
+      (use-package lsp-mode
+  :init
+(setq lsp-keymap-prefix "C-c l")
+      :ensure t)
+    (use-package lsp-treemacs
+    :ensure t)
+#+end_src
+
+**** Servers
+***** Flutter
+#+begin_src emacs-lisp
+  (use-package dart-mode
+:mode ("\\.dart\\'")
+:ensure t)
+(use-package lsp-dart
+:ensure t)
+
+  (add-hook 'dart-mode-hook 'lsp)
+#+end_src
+***** C/C++
+
 
 ** Magit
 Configuration for Magit, the Git interface for Emacs.
