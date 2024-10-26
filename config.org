@@ -25,6 +25,8 @@
   - [[#bullets][Bullets]]
   - [[#disable-electric-indent][Disable Electric Indent]]
   - [[#org-tempo][Org Tempo]]
+- [[#ai][AI]]
+  - [[#gptel][gptel]]
 - [[#software-development][Software Development]]
   - [[#treesitter][Treesitter]]
   - [[#company-mode][Company mode]]
@@ -48,7 +50,7 @@ This section configures Emacs to use UTF-8 as the default encoding.
 ** Set theme
 #+begin_src emacs-lisp
 (load-theme 'tango-dark t)
-#+end_src
+#+End_src
 
 ** Backup dir
 #+begin_src emacs-lisp
@@ -136,7 +138,7 @@ Configures Evil mode, a Vim emulation layer for Emacs.
 (use-package evil-collection
   :after evil
   :config
-  (setq evil-collection-mode-list '(dashboard dired ibuffer magit))
+  (setq evil-collection-mode-list '(dashboard dired ibuffer magit ivy))
   (evil-collection-init))
 #+end_src
 
@@ -336,6 +338,12 @@ Sets up Org tempo for faster text expansion.
 (require 'org-tempo)
 #+end_src
 
+* AI
+** gptel
+#+begin_src emacs-lisp
+  (use-package gptel)
+#+end_src
+
 * Software Development
 ** Treesitter
 #+begin_src emacs-lisp
@@ -365,6 +373,7 @@ Sets up Org tempo for faster text expansion.
   :init
 (setq lsp-keymap-prefix "C-c l")
       :ensure t)
+
     (use-package lsp-treemacs
     :ensure t)
 #+end_src
@@ -372,23 +381,24 @@ Sets up Org tempo for faster text expansion.
 **** Servers
 ***** Flutter
 #+begin_src emacs-lisp
-  (use-package dart-mode
-:mode ("\\.dart\\'")
-:ensure t)
+(use-package dart-mode
+  :mode ("\\.dart\\'")
+  :ensure t)
+
 (use-package lsp-dart
-:ensure t)
+  :ensure t
+  :hook (dart-mode . lsp))
 
-  (add-hook 'dart-mode-hook 'lsp)
+;; Enable auto-formatting on save for dart-mode
+(add-hook 'dart-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook #'lsp-format-buffer nil t)))
 #+end_src
-***** C/C++
-
-
 ** Magit
 Configuration for Magit, the Git interface for Emacs.
 #+begin_src emacs-lisp
-    (use-package transient
-  :defer t
-  )
+   (use-package transient
+  :defer t)
   (use-package magit)
 #+end_src
 
