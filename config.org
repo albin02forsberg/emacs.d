@@ -38,23 +38,23 @@
 ** Set Default Encoding to UTF-8
 This section configures Emacs to use UTF-8 as the default encoding.
 #+begin_src emacs-lisp
-(setq locale-coding-system 'utf-8)
-(set-language-environment "UTF-8")
+  (setq locale-coding-system 'utf-8)
+  (set-language-environment "UTF-8")
 #+end_src
 
 ** Start in Fullscreen
 #+begin_src emacs-lisp
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+end_src
 
 ** Set theme
 #+begin_src emacs-lisp
-(load-theme 'tango-dark t)
+  (load-theme 'tango-dark t)
 #+End_src
 
 ** Backup dir
 #+begin_src emacs-lisp
-(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 #+end_src
 
 ** Package Manager
@@ -66,9 +66,9 @@ This section configures Elpaca, a package manager for Emacs, enabling easy packa
   (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
   (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
   (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                                 :ref nil
-                                 :files (:defaults (:exclude "extensions"))
-                                 :build (:not elpaca--activate-package)))
+                                :ref nil
+                                :files (:defaults (:exclude "extensions"))
+                                :build (:not elpaca--activate-package)))
 
   (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
          (build (expand-file-name "elpaca/" elpaca-builds-directory))
@@ -79,19 +79,19 @@ This section configures Elpaca, a package manager for Emacs, enabling easy packa
       (make-directory repo t)
       (when (< emacs-major-version 28) (require 'subr-x))
       (condition-case-unless-debug err
-        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                 ((zerop (call-process "git" nil buffer t "clone"
-                                       (plist-get order :repo) repo)))
-                 ((zerop (call-process "git" nil buffer t "checkout"
-                                       (or (plist-get order :ref) "--"))))
-                 (emacs (concat invocation-directory invocation-name))
-                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-                 ((require 'elpaca))
-                 ((elpaca-generate-autoloads "elpaca" repo)))
-            (kill-buffer buffer)
-          (error "%s" (with-current-buffer buffer (buffer-string))))
-      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+          (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                   ((zerop (call-process "git" nil buffer t "clone"
+                                         (plist-get order :repo) repo)))
+                   ((zerop (call-process "git" nil buffer t "checkout"
+                                         (or (plist-get order :ref) "--"))))
+                   (emacs (concat invocation-directory invocation-name))
+                   ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                         "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                   ((require 'elpaca))
+                   ((elpaca-generate-autoloads "elpaca" repo)))
+              (kill-buffer buffer)
+            (error "%s" (with-current-buffer buffer (buffer-string))))
+        ((error) (warn "%s" err) (delete-directory repo 'recursive))))
     (unless (require 'elpaca-autoloads nil t)
       (require 'elpaca)
       (elpaca-generate-autoloads "elpaca" repo)
@@ -113,10 +113,10 @@ Configuration to ensure compatibility with Windows systems that may have issues 
 *** Set Elpaca as Package Manager
 Sets up support for `use-package` with Elpaca.
 #+begin_src emacs-lisp
-              (elpaca elpaca-use-package
-   (elpaca-use-package-mode)
-                (setq elpaca-use-package-by-default t)
-  (setq use-package-always-ensure t))
+  (elpaca elpaca-use-package
+    (elpaca-use-package-mode)
+    (setq elpaca-use-package-by-default t)
+    (setq use-package-always-ensure t))
 
   (elpaca-wait) ;; Block until the current queue is processed.
   (use-package emacs :ensure nil :config (setq ring-bell-function #'ignore))
@@ -127,184 +127,201 @@ Sets up support for `use-package` with Elpaca.
 ** Load Evil Mode
 Configures Evil mode, a Vim emulation layer for Emacs.
 #+begin_src emacs-lisp
-(use-package evil
-  :init
-  (setq evil-want-integration t
-        evil-want-keybinding nil
-        evil-vsplit-window-right t
-        evil-split-window-below t)
-  (evil-mode))  ;; Enable Evil mode.
+  (use-package evil
+    :init
+    (setq evil-want-integration t
+          evil-want-keybinding nil
+          evil-vsplit-window-right t
+          evil-split-window-below t)
+    (evil-mode))  ;; Enable Evil mode.
 
-(use-package evil-collection
-  :after evil
-  :config
-  (setq evil-collection-mode-list '(dashboard dired ibuffer magit ivy))
-  (evil-collection-init))
+  (use-package evil-collection
+    :after evil
+    :config
+    (setq evil-collection-mode-list '(dashboard dired ibuffer magit ivy))
+    (evil-collection-init))
 #+end_src
 
 ** Which Key
 Configures `which-key` to display available keybindings contextually.
 #+begin_src emacs-lisp
-(use-package which-key
-  :init (which-key-mode 1)
-  :config
-  (setq which-key-side-window-location 'bottom
-        which-key-sort-order #'which-key-key-order-alpha
-        which-key-sort-uppercase-first nil
-        which-key-add-column-padding 1
-        which-key-max-display-columns nil
-        which-key-min-display-lines 6
-        which-key-side-window-slot -10
-        which-key-side-window-max-height 0.25
-        which-key-idle-delay 0.8
-        which-key-max-description-length 25
-        which-key-allow-imprecise-window-fit t
-        which-key-separator " → "))
+  (use-package which-key
+    :init (which-key-mode 1)
+    :config
+    (setq which-key-side-window-location 'bottom
+          which-key-sort-order #'which-key-key-order-alpha
+          which-key-sort-uppercase-first nil
+          which-key-add-column-padding 1
+          which-key-max-display-columns nil
+          which-key-min-display-lines 6
+          which-key-side-window-slot -10
+          which-key-side-window-max-height 0.25
+          which-key-idle-delay 0.8
+          which-key-max-description-length 25
+          which-key-allow-imprecise-window-fit t
+          which-key-separator " → "))
 #+end_src
 
 ** Keybindings
-Customizes keybindings for various modes using `general`.
 #+begin_src emacs-lisp
-;;(use-package general
- ;; :config
- ;; (general-evil-setup)
+  (use-package general
+    :config
+    (general-evil-setup)
 
-  ;; Set up 'SPC' as the global leader key.
-;;  (general-create-definer dt/leader-keys
- ;;   :states '(normal insert visual emacs)
-  ;;  :keymaps 'override
-  ;;  :prefix "SPC"  ;; Leader prefix
-  ;;  :global-prefix "M-SPC")  ;; Access leader in insert mode
+    ;;Set up 'SPC' as the global leader key.
+    (general-create-definer dt/leader-keys
+      :states '(normal insert visual emacs)
+      :keymaps 'override
+      :prefix "SPC"  ;; Leader prefix
+      :global-prefix "M-SPC")  ;; Access leader in insert mode
 
-  ;;(dt/leader-keys
-  ;;  "b" '(:ignore t :wk "buffer")
-  ;;  "bb" '(switch-to-buffer :wk "Switch buffer")
-  ;;  "bk" '(kill-this-buffer :wk "Kill this buffer")
-  ;;  "bn" '(next-buffer :wk "Next buffer")
-  ;;  "bp" '(previous-buffer :wk "Previous buffer")
-  ;;  "br" '(revert-buffer :wk "Reload buffer"))
-;;)
+    (dt/leader-keys
+      ;; Buffer
+      "b" '(:ignore t :wk "buffer")
+      "bb" '(switch-to-buffer :wk "Switch buffer")
+      "bk" '(kill-this-buffer :wk "Kill this buffer")
+      "bn" '(next-buffer :wk "Next buffer")
+      "bp" '(previous-buffer :wk "Previous buffer")
+      "br" '(revert-buffer :wk "Reload buffer")
+      ;; gptel
+      "c" '(:ignore t :wk "gptel")
+      "cb" '(gptel :wk "Start gptel buffer")
+      "cs" '(gptel-send :wk "Send query to gpt")
+      ;; Windows
+      "w" '(:ignore t :wk "window")
+      "wl" '(evil-window-right :wk "Switch to right window")
+      "wl" '(evil-window-right :wk "Switch to right window")
+      "wh" '(evil-window-right :wk "Switch to left window")
+      "wq" '(evil-window-right :wk "Quit window")
+      ;; Git
+      "g" '(:ignore t :wk "git")
+      "gg" '(magit :wk "git status")
+      ;; Org
+      "o" '(:ignore t :wk "org")
+      "oc" '(org-capture :wk "capture")
+      "oa" '(org-agenda :wk "agenda")
+      ))
 #+end_src
 
 ** All the Icons
 Sets up the display of icons in Emacs.
 #+begin_src emacs-lisp
-(use-package all-the-icons
-  :ensure t
-  :if (display-graphic-p))
+  (use-package all-the-icons
+    :ensure t
+    :if (display-graphic-p))
 
-(use-package all-the-icons-dired
-  :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+  (use-package all-the-icons-dired
+    :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
 #+end_src
 
 ** Ivy
 Configuration for Ivy, a completion framework.
 #+begin_src emacs-lisp
-(use-package counsel
-  :after ivy
-  :diminish
-  :config 
+  (use-package counsel
+    :after ivy
+    :diminish
+    :config 
     (counsel-mode)
-   (setq ivy-initial-inputs-alist nil)) ;; removes starting ^ regex in M-x
+    (setq ivy-initial-inputs-alist nil)) ;; removes starting ^ regex in M-x
 
-(use-package ivy
-  :ensure t
-  :config
-  (ivy-mode 1))
+  (use-package ivy
+    :ensure t
+    :config
+    (ivy-mode 1))
 
-(use-package all-the-icons-ivy-rich
-  :ensure t
-  :init (all-the-icons-ivy-rich-mode 1))
+  (use-package all-the-icons-ivy-rich
+    :ensure t
+    :init (all-the-icons-ivy-rich-mode 1))
 
-(use-package ivy-rich
-  :after ivy
-  :ensure t
-  :init (ivy-rich-mode 1) ;; this gets us descriptions in M-x.
-  :custom
-  (ivy-virtual-abbreviate 'full
-   ivy-rich-switch-buffer-align-virtual-buffer t
-   ivy-rich-path-style 'abbrev)
- :config)
+  (use-package ivy-rich
+    :after ivy
+    :ensure t
+    :init (ivy-rich-mode 1) ;; this gets us descriptions in M-x.
+    :custom
+    (ivy-virtual-abbreviate 'full
+                            ivy-rich-switch-buffer-align-virtual-buffer t
+                            ivy-rich-path-style 'abbrev)
+    :config)
 #+end_src
 
 ** Dashboard
 Configures the startup dashboard.
 #+begin_src emacs-lisp
-(use-package dashboard
-  :ensure t 
-  :init
-  (setq initial-buffer-choice 'dashboard-open)
-  (setq dashboard-set-heading-icons t)
-  (setq dashboard-set-file-icons t)
-  (setq dashboard-banner-logo-title "Emacs Is More Than A Text Editor!")
-  ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
-  (setq dashboard-startup-banner "~/.config/emacs/images/dtmacs-logo.png")  ;; use custom image as banner
-  (setq dashboard-center-content nil) ;; set to 't' for centered content
-  (setq dashboard-items '((recents . 5)
-                          (agenda . 5 )
-                          (bookmarks . 3)
-                          (projects . 3)
-                          (registers . 3)))
-  :custom 
-  (dashboard-modify-heading-icons '((recents . "file-text")
-				      (bookmarks . "book")))
-  :config
-  (dashboard-setup-startup-hook))
+  (use-package dashboard
+    :ensure t 
+    :init
+    (setq initial-buffer-choice 'dashboard-open)
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
+    (setq dashboard-banner-logo-title "Emacs Is More Than A Text Editor!")
+    ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+    (setq dashboard-startup-banner "~/.config/emacs/images/dtmacs-logo.png")  ;; use custom image as banner
+    (setq dashboard-center-content nil) ;; set to 't' for centered content
+    (setq dashboard-items '((recents . 5)
+                            (agenda . 5 )
+                            (bookmarks . 3)
+                            (projects . 3)
+                            (registers . 3)))
+    :custom 
+    (dashboard-modify-heading-icons '((recents . "file-text")
+                                      (bookmarks . "book")))
+    :config
+    (dashboard-setup-startup-hook))
 #+end_src
 
 ** Modeline
 Configures the Doom modeline for a more informative display.
 #+begin_src emacs-lisp
-(use-package doom-modeline
-  :ensure t
-  :init (doom-modeline-mode 1)
-  :config
-  (setq doom-modeline-height 35      ;; Sets modeline height.
-       doom-modeline-bar-width 5    ;; Sets right bar width.
-        doom-modeline-persp-name t   ;; Adds perspective name to modeline.
-        doom-modeline-persp-icon t))  ;; Adds folder icon next to perspective name.
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1)
+    :config
+    (setq doom-modeline-height 35      ;; Sets modeline height.
+          doom-modeline-bar-width 5    ;; Sets right bar width.
+          doom-modeline-persp-name t   ;; Adds perspective name to modeline.
+          doom-modeline-persp-icon t))  ;; Adds folder icon next to perspective name.
 #+end_src
 
 * Fonts
 Configures font settings. Ensure JetBrains and Ubuntu fonts are installed.
 #+begin_src emacs-lisp
-(set-face-attribute 'default nil
-  :font "JetBrains Mono"
-  :height 110
-  :weight 'medium)
-(set-face-attribute 'variable-pitch nil
-  :font "Ubuntu"
-  :height 120
-  :weight 'medium)
-(set-face-attribute 'fixed-pitch nil
-  :font "JetBrains Mono"
-  :height 110
-  :weight 'medium)
+  (set-face-attribute 'default nil
+                      :font "JetBrains Mono"
+                      :height 110
+                      :weight 'medium)
+  (set-face-attribute 'variable-pitch nil
+                      :font "Ubuntu"
+                      :height 120
+                      :weight 'medium)
+  (set-face-attribute 'fixed-pitch nil
+                      :font "JetBrains Mono"
+                      :height 110
+                      :weight 'medium)
 
-;; Italicize comments and keywords.
-(set-face-attribute 'font-lock-comment-face nil :slant 'italic)
-(set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
+  ;; Italicize comments and keywords.
+  (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
+  (set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
 
-(add-to-list 'default-frame-alist '(font . "JetBrains Mono-11"))
+  (add-to-list 'default-frame-alist '(font . "JetBrains Mono-11"))
 
-;; Uncomment to adjust line spacing if needed.
-(setq-default line-spacing 0.12)
+  ;; Uncomment to adjust line spacing if needed.
+  (setq-default line-spacing 0.12)
 #+end_src
 
 * Graphics
 ** Setup
 Basic UI setup by disabling unnecessary UI elements.
 #+begin_src emacs-lisp
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
 #+end_src
 
 ** Line Numbers
 Enables line numbers and visual line mode.
 #+begin_src emacs-lisp
-(global-display-line-numbers-mode 1)
-(global-visual-line-mode t)
+  (global-display-line-numbers-mode 1)
+  (global-visual-line-mode t)
 #+end_src
 
 * Org Mode
@@ -312,30 +329,30 @@ Configuration specific to Org mode.
 ** Table of Contents
 Automatically generates a table of contents in Org files.
 #+begin_src emacs-lisp
-(use-package toc-org
-  :commands toc-org-enable
-  :init (add-hook 'org-mode-hook 'toc-org-enable))  ;; Enable TOC in Org mode.
+  (use-package toc-org
+    :commands toc-org-enable
+    :init (add-hook 'org-mode-hook 'toc-org-enable))  ;; Enable TOC in Org mode.
 #+end_src
 
 ** Bullets
 Enhances bullet point appearance in Org files.
 #+begin_src emacs-lisp
-(add-hook 'org-mode-hook 'org-indent-mode)  ;; Enable indentation in Org mode.
-(use-package org-bullets
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))  ;; Enable org-bullets.
+  (add-hook 'org-mode-hook 'org-indent-mode)  ;; Enable indentation in Org mode.
+  (use-package org-bullets
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))  ;; Enable org-bullets.
 #+end_src
 
 ** Disable Electric Indent
 Disables electric indentation in Org mode.
 #+begin_src emacs-lisp
-(electric-indent-mode -1)
+  (electric-indent-mode -1)
 #+end_src
 
 ** Org Tempo
 Sets up Org tempo for faster text expansion.
 #+begin_src emacs-lisp
-(require 'org-tempo)
+  (require 'org-tempo)
 #+end_src
 
 * AI
@@ -347,58 +364,63 @@ Sets up Org tempo for faster text expansion.
 * Software Development
 ** Treesitter
 #+begin_src emacs-lisp
-(use-package tree-sitter)
+  (use-package tree-sitter)
 #+end_src
 
 ** Company mode
 #+begin_src emacs-lisp
-(use-package company
-  :hook (after-init . global-company-mode)
-  :config
-  (setq company-minimum-prefix-length 1)
-  (setq company-idle-delay 0.0))
+  (use-package company
+    :hook (after-init . global-company-mode)
+    :config
+    (setq company-minimum-prefix-length 1)
+    (setq company-idle-delay 0.0))
 #+end_src
 
 ** Flycheck
 #+begin_src emacs-lisp
-(use-package flycheck
-  :init (global-flycheck-mode))
+  (use-package flycheck
+    :init (global-flycheck-mode))
 #+end_src
 
 ** Language servers
 *** lsp mode 
 **** Setup
 #+begin_src emacs-lisp
-      (use-package lsp-mode
-  :init
-(setq lsp-keymap-prefix "C-c l")
-      :ensure t)
-
-    (use-package lsp-treemacs
+  (use-package lsp-mode
+    :init
+    (setq lsp-keymap-prefix "C-c l")
+    :ensure t)
+  (use-package lsp-treemacs
     :ensure t)
 #+end_src
 
 **** Servers
 ***** Flutter
 #+begin_src emacs-lisp
-(use-package dart-mode
-  :mode ("\\.dart\\'")
-  :ensure t)
+  (use-package dart-mode
+    :mode ("\\.dart\\'")
+    :ensure t)
 
-(use-package lsp-dart
-  :ensure t
-  :hook (dart-mode . lsp))
+  (use-package lsp-dart
+    :ensure t
+    :hook (dart-mode . lsp))
 
-;; Enable auto-formatting on save for dart-mode
-(add-hook 'dart-mode-hook
-          (lambda ()
-            (add-hook 'before-save-hook #'lsp-format-buffer nil t)))
+  ;; Enable auto-formatting on save for dart-mode
+  (add-hook 'dart-mode-hook
+            (lambda ()
+              (add-hook 'before-save-hook #'lsp-format-buffer nil t)))
+#+end_src
+
+***** ts/js
+#+begin_src emacs-lisp
+  (use-package typescript-mode
+    :mode ("\\.ts\\'" "\\.js\\'"))
 #+end_src
 ** Magit
 Configuration for Magit, the Git interface for Emacs.
 #+begin_src emacs-lisp
-   (use-package transient
-  :defer t)
+  (use-package transient
+    :defer t)
   (use-package magit)
 #+end_src
 
