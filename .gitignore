@@ -1,1 +1,9 @@
 elpaca
+org-persist
+config.el
+transient
+recentf
+.gitignore
+server
+auto-save-list
+backups
