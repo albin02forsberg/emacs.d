@@ -25,6 +25,7 @@
   - [[#bullets][Bullets]]
   - [[#disable-electric-indent][Disable Electric Indent]]
   - [[#org-tempo][Org Tempo]]
+  - [[#agenda][Agenda]]
 - [[#ai][AI]]
   - [[#gptel][gptel]]
 - [[#software-development][Software Development]]
@@ -190,9 +191,8 @@ Configures `which-key` to display available keybindings contextually.
       ;; Windows
       "w" '(:ignore t :wk "window")
       "wl" '(evil-window-right :wk "Switch to right window")
-      "wl" '(evil-window-right :wk "Switch to right window")
-      "wh" '(evil-window-right :wk "Switch to left window")
-      "wq" '(evil-window-right :wk "Quit window")
+      "wh" '(evil-window-left :wk "Switch to left window")
+      "wq" '(evil-quit :wk "Quit window")
       ;; Git
       "g" '(:ignore t :wk "git")
       "gg" '(magit :wk "git status")
@@ -355,6 +355,18 @@ Sets up Org tempo for faster text expansion.
   (require 'org-tempo)
 #+end_src
 
+** Agenda
+#+begin_src emacs-lisp
+  ;; (setq org-directory "~/org")
+  ;; (setq org-agenda-files (directory-files-recursively "~/org/" "\\.org$"))
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
+           "* TODO %?\n  SCHEDULED: %t\n  %i\n  %a")
+          ("j" "Journal" entry (file+datetree "~/org/journal.org")
+           "* %?\nEntered on %U\n  %i\n  %a")))
+#+end_src
+
+Make sure to customize the file paths if needed!
 * AI
 ** gptel
 #+begin_src emacs-lisp
