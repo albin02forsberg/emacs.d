@@ -29,6 +29,7 @@
 - [[#ai][AI]]
   - [[#gptel][gptel]]
 - [[#software-development][Software Development]]
+  - [[#projectile][Projectile]]
   - [[#treesitter][Treesitter]]
   - [[#company-mode][Company mode]]
   - [[#flycheck][Flycheck]]
@@ -200,6 +201,11 @@ Configures `which-key` to display available keybindings contextually.
       "n" '(:ignore t :wk "org")
       "nc" '(org-capture :wk "capture")
       "na" '(org-agenda :wk "agenda")
+  ;; Projectile
+      "p" '(:ignore t :wk "project")
+      "pp" '(projectile-switch-project :wk "Switch to project")
+      "pf" '(:ignore t :wk "project file")
+      "pff" '(projectile-find-file :wk "Switch to project")
       ))
 #+end_src
 
@@ -372,6 +378,16 @@ Sets up Org tempo for faster text expansion.
 #+end_src
 
 * Software Development
+** Projectile
+#+begin_src emacs-lisp
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1)
+  :bind (:map projectile-mode-map
+              ("s-p" . projectile-command-map)
+              ("C-c p" . projectile-command-map)))
+#+end_src
 ** Treesitter
 #+begin_src emacs-lisp
   (use-package tree-sitter)
