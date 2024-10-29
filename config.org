@@ -54,7 +54,7 @@ This section configures Emacs to use UTF-8 as the default encoding.
 
 ** Set theme
 #+begin_src emacs-lisp
-  ;; (load-theme 'tango-dark t)
+  (load-theme 'wombat t)
 #+End_src
 
 ** Backup dir
