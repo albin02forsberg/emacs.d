@@ -20,17 +20,20 @@
 - [[#graphics][Graphics]]
   - [[#setup-1][Setup]]
   - [[#line-numbers][Line Numbers]]
+  - [[#tab-width][Tab width]]
 - [[#org-mode][Org Mode]]
   - [[#table-of-contents][Table of Contents]]
   - [[#bullets][Bullets]]
   - [[#disable-electric-indent][Disable Electric Indent]]
   - [[#org-tempo][Org Tempo]]
   - [[#agenda][Agenda]]
+  - [[#timeclock][Timeclock]]
 - [[#ai][AI]]
   - [[#gptel][gptel]]
 - [[#software-development][Software Development]]
   - [[#projectile][Projectile]]
   - [[#treesitter][Treesitter]]
+  - [[#smartparens][Smartparens]]
   - [[#company-mode][Company mode]]
   - [[#flycheck][Flycheck]]
   - [[#language-servers][Language servers]]
@@ -206,6 +209,10 @@ Configures `which-key` to display available keybindings contextually.
       "pp" '(projectile-switch-project :wk "Switch to project")
       "pf" '(:ignore t :wk "project file")
       "pff" '(projectile-find-file :wk "Switch to project")
+;; Timeclock
+      "t" '(:ignore t :wk "timeclock")
+      "ti" '(timeclock-in :wk "Clock in")
+      "to" '(timeclock-out :wk "Clock out")
       ))
 #+end_src
 
@@ -308,7 +315,7 @@ Configures font settings. Ensure JetBrains and Ubuntu fonts are installed.
   (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
   (set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
 
-  (add-to-list 'default-frame-alist '(font . "JetBrains Mono-11"))
+  (add-to-list 'default-frame-alist '(font . "JetBrains Mono-10"))
 
   ;; Uncomment to adjust line spacing if needed.
   (setq-default line-spacing 0.12)
@@ -328,6 +335,12 @@ Enables line numbers and visual line mode.
 #+begin_src emacs-lisp
   (global-display-line-numbers-mode 1)
   (global-visual-line-mode t)
+#+end_src
+
+** Tab width
+#+begin_src emacs-lisp
+(setq-default tab-width 2)
+(setq-default indext-tabs-mode nil)
 #+end_src
 
 * Org Mode
@@ -371,6 +384,12 @@ Sets up Org tempo for faster text expansion.
           ("j" "Journal" entry (file+datetree "~/org/journal.org")
            "* %?\nEntered on %U\n  %i\n  %a")))
 #+end_src
+
+** Timeclock
+#+begin_src emacs-lisp
+(setq display-time-mode t)
+(setq timeclock-mode-line-display t)
+#+end_src
 * AI
 ** gptel
 #+begin_src emacs-lisp
@@ -391,6 +410,16 @@ Sets up Org tempo for faster text expansion.
 ** Treesitter
 #+begin_src emacs-lisp
   (use-package tree-sitter)
+#+end_src
+
+** Smartparens
+#+begin_src emacs-lisp
+(use-package smartparens
+  :ensure smartparens  ;; install the package
+  :hook (prog-mode text-mode markdown-mode dart-mode typescript-mode) ;; add `smartparens-mode` to these hooks
+  :config
+  ;; load default config
+  (require 'smartparens-config))
 #+end_src
 
 ** Company mode
@@ -423,24 +452,29 @@ Sets up Org tempo for faster text expansion.
 **** Servers
 ***** Flutter
 #+begin_src emacs-lisp
-  (use-package dart-mode
-    :mode ("\\.dart\\'")
-    :ensure t)
+    (use-package dart-mode
+      :mode ("\\.dart\\'")
+      :ensure t)
 
-  (use-package lsp-dart
-    :ensure t
-    :hook (dart-mode . lsp))
+(use-package lsp-dart
+  :ensure t
+  :hook ((dart-mode . lsp)
+         (typescript-mode . lsp))
+)
 
-  ;; Enable auto-formatting on save for dart-mode
-  (add-hook 'dart-mode-hook
-            (lambda ()
-              (add-hook 'before-save-hook #'lsp-format-buffer nil t)))
+    ;; Enable auto-formatting on save for dart-mode
+    (add-hook 'dart-mode-hook
+              (lambda ()
+                (add-hook 'before-save-hook #'lsp-format-buffer nil t)))
 #+end_src
 
 ***** ts/js
 #+begin_src emacs-lisp
   (use-package typescript-mode
     :mode ("\\.ts\\'" "\\.js\\'"))
+  (add-hook 'typescript-mode-hook
+            (lambda ()
+              (add-hook 'before-save-hook #'lsp-format-buffer nil t)))
 #+end_src
 ** Magit
 Configuration for Magit, the Git interface for Emacs.
