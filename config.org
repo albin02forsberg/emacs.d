@@ -54,7 +54,7 @@ This section configures Emacs to use UTF-8 as the default encoding.
 
 ** Set theme
 #+begin_src emacs-lisp
-  (load-theme 'tango-dark t)
+  ;; (load-theme 'tango-dark t)
 #+End_src
 
 ** Backup dir
@@ -132,19 +132,19 @@ Sets up support for `use-package` with Elpaca.
 ** Load Evil Mode
 Configures Evil mode, a Vim emulation layer for Emacs.
 #+begin_src emacs-lisp
-  (use-package evil
-    :init
-    (setq evil-want-integration t
-          evil-want-keybinding nil
-          evil-vsplit-window-right t
-          evil-split-window-below t)
-    (evil-mode))  ;; Enable Evil mode.
+  ;; (use-package evil
+  ;;   :init
+  ;;   (setq evil-want-integration t
+  ;;         evil-want-keybinding nil
+  ;;         evil-vsplit-window-right t
+  ;;         evil-split-window-below t)
+  ;;   (evil-mode))  ;; Enable Evil mode.
 
-  (use-package evil-collection
-    :after evil
-    :config
-    (setq evil-collection-mode-list '(dashboard dired ibuffer magit ivy))
-    (evil-collection-init))
+  ;; (use-package evil-collection
+  ;;   :after evil
+  ;;   :config
+  ;;   (setq evil-collection-mode-list '(dashboard dired ibuffer magit ivy))
+  ;;   (evil-collection-init))
 #+end_src
 
 ** Which Key
@@ -168,54 +168,51 @@ Configures `which-key` to display available keybindings contextually.
 #+end_src
 
 ** Keybindings
+Setting up some keybindings for emacs (not evil)
+
 #+begin_src emacs-lisp
-  (use-package general
-    :config
-    (general-evil-setup)
+(use-package general
+  :config
+  (general-evil-setup)
 
-    ;;Set up 'SPC' as the global leader key.
-    (general-create-definer dt/leader-keys
-      :states '(normal insert visual emacs)
-      :keymaps 'override
-      :prefix "SPC"  ;; Leader prefix
-      :global-prefix "M-SPC")  ;; Access leader in insert mode
+  ;; Set up 'SPC' as the global leader key.
+  (general-create-definer dt/leader-keys
+    :states '(normal insert visual emacs)
+    :keymaps 'override
+    :prefix "SPC"
+    :global-prefix "M-SPC")
 
-    (dt/leader-keys
-      ;; Buffer
-      "b" '(:ignore t :wk "buffer")
-      "bb" '(switch-to-buffer :wk "Switch buffer")
-      "bk" '(kill-this-buffer :wk "Kill this buffer")
-      "bn" '(next-buffer :wk "Next buffer")
-      "bp" '(previous-buffer :wk "Previous buffer")
-      "br" '(revert-buffer :wk "Reload buffer")
-      ;; gptel
-      "c" '(:ignore t :wk "gptel")
-      "cb" '(gptel :wk "Start gptel buffer")
-      "cs" '(gptel-send :wk "Send query to gpt")
-      ;; Windows
-      "w" '(:ignore t :wk "window")
-      "wl" '(evil-window-right :wk "Switch to right window")
-      "wh" '(evil-window-left :wk "Switch to left window")
-      "wq" '(evil-quit :wk "Quit window")
-      ;; Git
-      "g" '(:ignore t :wk "git")
-      "gg" '(magit :wk "git status")
-      ;; Org
-      "n" '(:ignore t :wk "org")
-      "nc" '(org-capture :wk "capture")
-      "na" '(org-agenda :wk "agenda")
-  ;; Projectile
-      "p" '(:ignore t :wk "project")
-      "pp" '(projectile-switch-project :wk "Switch to project")
-      "pf" '(:ignore t :wk "project file")
-      "pff" '(projectile-find-file :wk "Switch to project")
-;; Timeclock
-      "t" '(:ignore t :wk "timeclock")
-      "ti" '(timeclock-in :wk "Clock in")
-      "to" '(timeclock-out :wk "Clock out")
-      ))
+  (dt/leader-keys
+   ;; Buffer
+   "b" '(:ignore t :wk "buffer")
+   "bb" '(switch-to-buffer :wk "Switch buffer")
+   "bk" '(kill-this-buffer :wk "Kill this buffer")
+   "bn" '(next-buffer :wk "Next buffer")
+   "bp" '(previous-buffer :wk "Previous buffer")
+   "br" '(revert-buffer :wk "Reload buffer")
+   ;; gptel
+   "c" '(:ignore t :wk "gptel")
+   "cb" '(gptel :wk "Start gptel buffer")
+   "cs" '(gptel-send :wk "Send query to gpt")
+   ;; Git
+   "g" '(:ignore t :wk "git")
+   "gg" '(magit :wk "git status")
+   ;; Org
+   "n" '(:ignore t :wk "org")
+   "nc" '(org-capture :wk "capture")
+   "na" '(org-agenda :wk "agenda")
+   ;; Projectile
+   "p" '(:ignore t :wk "project")
+   "pp" '(projectile-switch-project :wk "Switch to project")
+   "pf" '(:ignore t :wk "project file")
+   "pff" '(projectile-find-file :wk "Switch to project")
+   ;; Timeclock
+   "t" '(:ignore t :wk "timeclock")
+   "ti" '(timeclock-in :wk "Clock in")
+   "to" '(timeclock-out :wk "Clock out")))
+
 #+end_src
-
+   
 ** All the Icons
 Sets up the display of icons in Emacs.
 #+begin_src emacs-lisp
@@ -268,7 +265,7 @@ Configures the startup dashboard.
     (setq dashboard-set-file-icons t)
     (setq dashboard-banner-logo-title "Emacs Is More Than A Text Editor!")
     ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
-    (setq dashboard-startup-banner "~/.config/emacs/images/dtmacs-logo.png")  ;; use custom image as banner
+    ;;(setq dashboard-startup-banner "~/.config/emacs/images/dtmacs-logo.png")  ;; use custom image as banner
     (setq dashboard-center-content nil) ;; set to 't' for centered content
     (setq dashboard-items '((recents . 5)
                             (agenda . 5 )
@@ -283,17 +280,22 @@ Configures the startup dashboard.
 #+end_src
 
 ** Modeline
-Configures the Doom modeline for a more informative display.
+To configure =telephone-line= in Emacs, you can add the following code to your Emacs configuration file (=init.el= or =.emacs=):
+
 #+begin_src emacs-lisp
-  (use-package doom-modeline
-    :ensure t
-    :init (doom-modeline-mode 1)
-    :config
-    (setq doom-modeline-height 35      ;; Sets modeline height.
-          doom-modeline-bar-width 5    ;; Sets right bar width.
-          doom-modeline-persp-name t   ;; Adds perspective name to modeline.
-          doom-modeline-persp-icon t))  ;; Adds folder icon next to perspective name.
+;; Ensure telephone-line is installed
+
+(use-package telephone-line
+:ensure t)
+
+(elpaca-wait)
+
+;; You might want to customize other settings depending on your needs
+
+(telephone-line-mode 1)
 #+end_src
+
+You can replace the segments and separators with ones that fit your aesthetic and functional preferences. After saving your configuration, restart Emacs or evaluate the buffer to apply the changes.
 
 * Fonts
 Configures font settings. Ensure JetBrains and Ubuntu fonts are installed.
@@ -318,7 +320,7 @@ Configures font settings. Ensure JetBrains and Ubuntu fonts are installed.
   (add-to-list 'default-frame-alist '(font . "JetBrains Mono-10"))
 
   ;; Uncomment to adjust line spacing if needed.
-  (setq-default line-spacing 0.12)
+  ;; (setq-default line-spacing 0.12)				
 #+end_src
 
 * Graphics
@@ -481,6 +483,17 @@ Configuration for Magit, the Git interface for Emacs.
 #+begin_src emacs-lisp
   (use-package transient
     :defer t)
-  (use-package magit)
+  ;; Configure magit
+
+(use-package magit
+  :ensure t
+  :bind (("C-x g" . magit-status))  ; Bind `C-x g` to open magit status
+  :config
+  (setq magit-auto-revert-mode t)   ; Enable auto-revert in magit buffers
+  (setq magit-diff-refine-hunk 'all) ; Always refine diffs
+  ;; Add more customizations here
+)
 #+end_src
+
+Feel free to add more settings according to your preferences!#+end_src
 
