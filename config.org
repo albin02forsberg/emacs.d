@@ -4,6 +4,8 @@
 * Table of Content :toc:
 - [[#setup][Setup]]
   - [[#set-default-encoding-to-utf-8][Set Default Encoding to UTF-8]]
+  - [[#set-24-hour-clock][Set 24 hour clock]]
+  - [[#fun][Fun]]
   - [[#start-in-fullscreen][Start in Fullscreen]]
   - [[#set-theme][Set theme]]
   - [[#backup-dir][Backup dir]]
@@ -25,10 +27,12 @@
   - [[#table-of-contents][Table of Contents]]
   - [[#bullets][Bullets]]
   - [[#org-modern][Org modern]]
+  - [[#org-bullets][Org bullets]]
   - [[#disable-electric-indent][Disable Electric Indent]]
   - [[#org-tempo][Org Tempo]]
   - [[#agenda][Agenda]]
   - [[#timeclock][Timeclock]]
+  - [[#org-clock][Org clock]]
   - [[#org-roam][Org Roam]]
 - [[#ai][AI]]
   - [[#gptel][gptel]]
@@ -40,6 +44,8 @@
   - [[#company-mode][Company mode]]
   - [[#flycheck][Flycheck]]
   - [[#language-servers][Language servers]]
+  - [[#yaml][yaml]]
+  - [[#terraform][Terraform]]
   - [[#magit][Magit]]
 
 * Setup
@@ -49,10 +55,19 @@ This section configures Emacs to use UTF-8 as the default encoding.
   (setq locale-coding-system 'utf-8)
   (set-language-environment "UTF-8")
 #+end_src
+** Set 24 hour clock
+#+begin_src emacs-lisp
+(setq display-time-24hr-format t)
+#+end_src
+** Fun
+#+begin_src 
+(zone-when-idle 120)
+#+end_src
 
 ** Start in Fullscreen
 #+begin_src emacs-lisp
-  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+ ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
+  (toggle-frame-fullscreen)
 #+end_src
 
 ** Set theme
@@ -259,39 +274,61 @@ Configuration for Ivy, a completion framework.
 ** Dashboard
 Configures the startup dashboard.
 #+begin_src emacs-lisp
-  (use-package dashboard
-    :ensure t 
-    :init
-    (setq initial-buffer-choice 'dashboard-open)
-    (setq dashboard-set-heading-icons t)
-    (setq dashboard-set-file-icons t)
-    (setq dashboard-banner-logo-title "Emacs Is More Than A Text Editor!")
-    ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
-    ;;(setq dashboard-startup-banner "~/.config/emacs/images/dtmacs-logo.png")  ;; use custom image as banner
-    (setq dashboard-center-content nil) ;; set to 't' for centered content
-    (setq dashboard-items '((recents . 5)
-                            (agenda . 5 )
-                            (bookmarks . 3)
-                            (projects . 8)
-                            (registers . 3)))
-    :custom 
-    (dashboard-modify-heading-icons '((recents . "file-text")
-                                      (bookmarks . "book")))
-    :config
-    (dashboard-setup-startup-hook))
+(use-package dashboard
+  :ensure t 
+  :init
+  (setq initial-buffer-choice 'dashboard-open)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-banner-logo-title "Emacs Is More Than A Text Editor!")
+  ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+  ;;(setq dashboard-startup-banner "~/.config/emacs/images/dtmacs-logo.png")  ;; use custom image as banner
+  (setq dashboard-center-content nil) ;; set to 't' for centered content
+  (setq dashboard-items '((recents . 5)
+                          (agenda . 5 )
+                          (bookmarks . 3)
+                          (projects . 3)
+                          (registers . 3)))
+  :custom 
+  (dashboard-modify-heading-icons '((recents . "file-text")
+                                    (bookmarks . "book")))
+  :config
+  (dashboard-setup-startup-hook))
 #+end_src
 
 ** Modeline
-To configure =telephone-line= in Emacs, you can add the following code to your Emacs configuration file (=init.el= or =.emacs=):
-
 #+begin_src emacs-lisp
-;; Ensure telephone-line is installed
-
-(use-package telephone-line
-:ensure t
-:init 
-(telephone-line-mode 1)) 
-
+    (use-package powerline
+      :ensure t
+      :config
+      (powerline-default-theme)  ;; Set the default powerline theme
+      (display-time-mode 1)
+      (timeclock-mode-line-display 1)
+      ;; Custom mode line format
+      ;; (setq-default mode-line-format
+      ;;               (list
+      ;;                ;; Buffer name
+      ;;                '(:eval (propertize (if (buffer-file-name)
+      ;;                                        (abbreviate-file-name (buffer-file-name))
+      ;;                                      "%b")  ;; Use buffer name if no file is associated
+      ;;                                    'face '(:foreground "white" :weight bold)))
+      ;;                ;; Space
+      ;;                "  "
+      ;;                ;; Major mode
+      ;;                '(:eval (propertize mode-name 'face '(:foreground "lightblue" :weight bold)))
+      ;;                ;; Space
+      ;;                "  "
+      ;;                ;; VC status
+      ;;                '(:eval (when (and (fboundp 'vc-mode) vc-mode)
+      ;;                          (propertize (format "[%s]" (vc-working-revision)) 'face '(:foreground "green"))))
+      ;;                ;; Line and column numbers
+      ;;                "  "
+      ;;                '(:eval (propertize (format "(%d, %d)" (line-number-at-pos) (current-column))
+      ;;                                    'face '(:foreground "yellow")))
+      ;;                ;; Time
+      ;;                "  "
+      ;;                '(:eval (propertize (format-time-string "%H:%M") 'face '(:foreground "orange"))))))
+  )
 #+end_src
 
 You can replace the segments and separators with ones that fit your aesthetic and functional preferences. After saving your configuration, restart Emacs or evaluate the buffer to apply the changes.
@@ -365,38 +402,15 @@ Enhances bullet point appearance in Org files.
 
 ** Org modern
 #+begin_src emacs-lisp
-        (use-package org-modern
-      :ensure t
-      :init
-      (with-eval-after-load 'org (global-org-modern-mode)))
-
-(setq
- ;; Edit settings
- org-auto-align-tags nil
- org-tags-column 0
- org-catch-invisible-edits 'show-and-error
- org-special-ctrl-a/e t
- org-insert-heading-respect-content t
-
- ;; Org styling, hide markup etc.
- org-hide-emphasis-markers t
- org-pretty-entities t
-
- ;; Agenda styling
- org-agenda-tags-column 0
- org-agenda-block-separator ?─
- org-agenda-time-grid
- '((daily today require-timed)
-   (800 1000 1200 1400 1600 1800 2000)
-   " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
- org-agenda-current-time-string
- "◀── now ─────────────────────────────────────────────────")
-
-;; Ellipsis styling
-(setq org-ellipsis "…")
-(set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)
+          (use-package org-modern
+        :ensure t
+        :init
+        (with-eval-after-load 'org (global-org-modern-mode)))
 #+end_src
-
+** Org bullets
+#+begin_src emacs-lisp
+(add-hook 'org-mode-hook 'org-indent-mode)  ;; Enable indentation in Org mode.
+#+end_src
 ** Disable Electric Indent
 Disables electric indentation in Org mode.
 #+begin_src emacs-lisp
@@ -424,6 +438,12 @@ Sets up Org tempo for faster text expansion.
 #+begin_src emacs-lisp
 (setq display-time-mode t)
 (setq timeclock-mode-line-display t)
+#+end_src
+
+** Org clock
+#+begin_src emacs-lisp
+  (setq org-clock-persist 'history)
+  (org-clock-persistence-insinuate)
 #+end_src
 
 ** Org Roam
@@ -506,12 +526,22 @@ Sets up Org tempo for faster text expansion.
 *** lsp mode 
 **** Setup
 #+begin_src emacs-lisp
-  (use-package lsp-mode
-    :init
-    (setq lsp-keymap-prefix "C-c l")
-    :ensure t)
-  (use-package lsp-treemacs
-    :ensure t)
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :ensure t
+  :config
+  ;; Enable which-key integration
+  (lsp-enable-which-key-integration)
+
+  ;; Enable auto-formatting on save for all LSP-supported modes
+  (add-hook 'lsp-mode-hook
+            (lambda ()
+              (add-hook 'before-save-hook #'lsp-format-buffer nil 'local))))
+
+(use-package lsp-treemacs
+  :ensure t)
 
 (setq gc-cons-threshold 5000000000)
 (setq read-process-output-max (* 10240 10240))
@@ -521,41 +551,51 @@ Sets up Org tempo for faster text expansion.
 **** Servers
 ***** Flutter
 #+begin_src emacs-lisp
-    (use-package dart-mode
-      :mode ("\\.dart\\'")
-      :ensure t)
+          (use-package dart-mode
+            :mode ("\\.dart\\'")
+            :ensure t)
 
-(use-package lsp-dart
-  :ensure t
-  :hook ((dart-mode . lsp)
-         (typescript-mode . lsp))
-)
-
-    ;; Enable auto-formatting on save for dart-mode
-    (add-hook 'dart-mode-hook
-              (lambda ()
-                (add-hook 'before-save-hook #'lsp-format-buffer nil t)))
+      (use-package lsp-dart
+        :ensure t
+        :hook ((dart-mode . lsp-deferred)
+               (typescript-mode . lsp-deferred)
+               (python-mode . lsp-deferred)
+               (yaml-mode . lsp-deferred)
+               (terraform-mode . lsp-deferred))
+      )
 #+end_src
-
 ***** ts/js
 #+begin_src emacs-lisp
   (use-package typescript-mode
     :mode ("\\.ts\\'" "\\.js\\'"))
-  (add-hook 'typescript-mode-hook
-            (lambda ()
-              (add-hook 'before-save-hook #'lsp-format-buffer nil t)))
+#+end_src
+**** Python
+#+begin_src emacs-lisp
+(use-package python-mode
+:mode ("\\.py\\'"))
+#+end_src
+** yaml
+#+begin_src emacs-lisp
+(use-package yaml-mode
+:mode ("\\.yaml\\'" "\\.yml\\'"))
+#+end_src
+** Terraform
+#+begin_src emacs-lisp
+(use-package terraform-mode
+:mode ("\\.tf\\'"))
 #+end_src
 
 ** Magit
 Configuration for Magit, the Git interface for Emacs.
 #+begin_src emacs-lisp
-  (use-package transient
-    :defer t)
+    (use-package transient
+      :defer t)
 
-;; Configure magit
+  ;; Configure magit
 
-(use-package magit
-  :ensure t
-  :bind (("C-x g" . magit-status))
-)
+  (use-package magit
+    :ensure t
+    :bind (("C-x g" . magit-status))
+    :config
+    (setq magit-auto-revert-mode t))
 #+end_src
