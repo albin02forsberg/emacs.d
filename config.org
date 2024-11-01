@@ -24,16 +24,19 @@
 - [[#org-mode][Org Mode]]
   - [[#table-of-contents][Table of Contents]]
   - [[#bullets][Bullets]]
+  - [[#org-modern][Org modern]]
   - [[#disable-electric-indent][Disable Electric Indent]]
   - [[#org-tempo][Org Tempo]]
   - [[#agenda][Agenda]]
   - [[#timeclock][Timeclock]]
+  - [[#org-roam][Org Roam]]
 - [[#ai][AI]]
   - [[#gptel][gptel]]
 - [[#software-development][Software Development]]
   - [[#projectile][Projectile]]
   - [[#treesitter][Treesitter]]
   - [[#smartparens][Smartparens]]
+  - [[#yasnippet][yasnippet]]
   - [[#company-mode][Company mode]]
   - [[#flycheck][Flycheck]]
   - [[#language-servers][Language servers]]
@@ -354,10 +357,44 @@ Automatically generates a table of contents in Org files.
 ** Bullets
 Enhances bullet point appearance in Org files.
 #+begin_src emacs-lisp
-  (add-hook 'org-mode-hook 'org-indent-mode)  ;; Enable indentation in Org mode.
-  (use-package org-bullets
-    :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))  ;; Enable org-bullets.
+  ;; (add-hook 'org-mode-hook 'org-indent-mode)  ;; Enable indentation in Org mode.
+  ;; (use-package org-bullets
+  ;;   :config
+  ;;   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))  ;; Enable org-bullets.
+#+end_src
+
+** Org modern
+#+begin_src emacs-lisp
+        (use-package org-modern
+      :ensure t
+      :init
+      (with-eval-after-load 'org (global-org-modern-mode)))
+
+(setq
+ ;; Edit settings
+ org-auto-align-tags nil
+ org-tags-column 0
+ org-catch-invisible-edits 'show-and-error
+ org-special-ctrl-a/e t
+ org-insert-heading-respect-content t
+
+ ;; Org styling, hide markup etc.
+ org-hide-emphasis-markers t
+ org-pretty-entities t
+
+ ;; Agenda styling
+ org-agenda-tags-column 0
+ org-agenda-block-separator ?─
+ org-agenda-time-grid
+ '((daily today require-timed)
+   (800 1000 1200 1400 1600 1800 2000)
+   " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+ org-agenda-current-time-string
+ "◀── now ─────────────────────────────────────────────────")
+
+;; Ellipsis styling
+(setq org-ellipsis "…")
+(set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)
 #+end_src
 
 ** Disable Electric Indent
@@ -388,6 +425,30 @@ Sets up Org tempo for faster text expansion.
 (setq display-time-mode t)
 (setq timeclock-mode-line-display t)
 #+end_src
+
+** Org Roam
+#+begin_src emacs-lisp
+          (use-package org-roam
+          :ensure t
+          :custom
+          (org-roam-directory "~/org-roam")
+          (org-roam-dailies-directory "journal/")
+          :bind (("C-c n l" . org-roam-buffer-toggle)
+               ("C-c n f" . org-roam-node-find)
+               ("C-c n i" . org-roam-node-insert)
+               :map org-mode-map
+               ("C-M-i" . completion-at-point)
+               :map org-roam-dailies-map
+  ("Y" . org-roam-dailies-capture-yesterday)
+  ("T" .  org-roamdailies-capture-tomorrow))
+  :bind-keymap
+  ("C-c n d" . org-roam-dailies-map)
+          :config
+          (require 'org-roam-dailies)
+          (org-roam-db-autosync-mode)
+          (org-roam-setup))
+#+end_src
+
 * AI
 ** gptel
 #+begin_src emacs-lisp
@@ -420,6 +481,12 @@ Sets up Org tempo for faster text expansion.
   (require 'smartparens-config))
 #+end_src
 
+** yasnippet
+#+begin_src emacs-lisp
+  (use-package yasnippet
+:ensure t)
+#+end_src
+
 ** Company mode
 #+begin_src emacs-lisp
   (use-package company
@@ -446,8 +513,8 @@ Sets up Org tempo for faster text expansion.
   (use-package lsp-treemacs
     :ensure t)
 
-(setq gc-cons-threshold 1000000000)
-(setq read-process-output-max (* 5120 5120)) ;; 1mb
+(setq gc-cons-threshold 5000000000)
+(setq read-process-output-max (* 10240 10240))
 (setq lsp-idle-delay 0.500)
 #+end_src
 
@@ -492,4 +559,3 @@ Configuration for Magit, the Git interface for Emacs.
   :bind (("C-x g" . magit-status))
 )
 #+end_src
-
