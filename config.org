@@ -189,44 +189,47 @@ Configures `which-key` to display available keybindings contextually.
 Setting up some keybindings for emacs (not evil)
 
 #+begin_src emacs-lisp
-(use-package general
-  :config
-  (general-evil-setup)
+  (use-package general
+    :config
+    (general-evil-setup)
 
-  ;; Set up 'SPC' as the global leader key.
-  (general-create-definer dt/leader-keys
-    :major-modes t
-    :keymaps 'override
-    :prefix "C-c")
+    ;; Set up 'SPC' as the global leader key.
+    (general-create-definer dt/leader-keys
+      :major-modes t
+      :keymaps 'override
+      :prefix "C-c")
 
-  (dt/leader-keys
-   ;; Buffer
-   "b" '(:ignore t :wk "buffer")
-   "bb" '(switch-to-buffer :wk "Switch buffer")
-   "bk" '(kill-this-buffer :wk "Kill this buffer")
-   "bn" '(next-buffer :wk "Next buffer")
-   "bp" '(previous-buffer :wk "Previous buffer")
-   "br" '(revert-buffer :wk "Reload buffer")
-   ;; gptel
-   "c" '(:ignore t :wk "gptel")
-   "cb" '(gptel :wk "Start gptel buffer")
-   "cs" '(gptel-send :wk "Send query to gpt")
-   ;; Git
-   "g" '(:ignore t :wk "git")
-   "gg" '(magit :wk "git status")
-   ;; Org
-   "n" '(:ignore t :wk "org")
-   "nc" '(org-capture :wk "capture")
-   "na" '(org-agenda :wk "agenda")
-   ;; Projectile
-   "p" '(:ignore t :wk "project")
-   "pp" '(projectile-switch-project :wk "Switch to project")
-   "pf" '(:ignore t :wk "project file")
-   "pff" '(projectile-find-file :wk "Switch to project")
-   ;; Timeclock
-   "t" '(:ignore t :wk "timeclock")
-   "ti" '(timeclock-in :wk "Clock in")
-   "to" '(timeclock-out :wk "Clock out")))
+    (dt/leader-keys
+     ;; Buffer
+     "b" '(:ignore t :wk "buffer")
+     "bb" '(switch-to-buffer :wk "Switch buffer")
+     "bk" '(kill-this-buffer :wk "Kill this buffer")
+     "bn" '(next-buffer :wk "Next buffer")
+     "bp" '(previous-buffer :wk "Previous buffer")
+     "br" '(revert-buffer :wk "Reload buffer")
+     ;; gptel
+     "c" '(:ignore t :wk "gptel")
+     "cb" '(gptel :wk "Start gptel buffer")
+     "cs" '(gptel-send :wk "Send query to gpt")
+     ;; Git
+     "g" '(:ignore t :wk "git")
+     "gg" '(magit :wk "git status")
+     ;; Org
+     "n" '(:ignore t :wk "org")
+     "nc" '(org-capture :wk "capture")
+     "na" '(org-agenda :wk "agenda")
+     ;; Projectile
+     "p" '(:ignore t :wk "project")
+     "pp" '(projectile-switch-project :wk "Switch to project")
+     "pf" '(:ignore t :wk "project file")
+     "pff" '(projectile-find-file :wk "Switch to project")
+     ;; Timeclock
+     "t" '(:ignore t :wk "timeclock")
+     "ti" '(timeclock-in :wk "Clock in")
+     "to" '(timeclock-out :wk "Clock out")
+   ;; Dasboard
+     "d" '(dashboard-open :wk "Dashboard")
+  ))
 
 #+end_src
    
