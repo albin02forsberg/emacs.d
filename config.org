@@ -60,7 +60,8 @@ This section configures Emacs to use UTF-8 as the default encoding.
 (setq display-time-24hr-format t)
 #+end_src
 ** Fun
-#+begin_src 
+#+begin_src emacs-lisp
+(require 'zone)
 (zone-when-idle 120)
 #+end_src
 
@@ -301,37 +302,43 @@ Configures the startup dashboard.
 
 ** Modeline
 #+begin_src emacs-lisp
-    (use-package powerline
-      :ensure t
-      :config
-      (powerline-default-theme)  ;; Set the default powerline theme
-      (display-time-mode 1)
-      (timeclock-mode-line-display 1)
-      ;; Custom mode line format
-      ;; (setq-default mode-line-format
-      ;;               (list
-      ;;                ;; Buffer name
-      ;;                '(:eval (propertize (if (buffer-file-name)
-      ;;                                        (abbreviate-file-name (buffer-file-name))
-      ;;                                      "%b")  ;; Use buffer name if no file is associated
-      ;;                                    'face '(:foreground "white" :weight bold)))
-      ;;                ;; Space
-      ;;                "  "
-      ;;                ;; Major mode
-      ;;                '(:eval (propertize mode-name 'face '(:foreground "lightblue" :weight bold)))
-      ;;                ;; Space
-      ;;                "  "
-      ;;                ;; VC status
-      ;;                '(:eval (when (and (fboundp 'vc-mode) vc-mode)
-      ;;                          (propertize (format "[%s]" (vc-working-revision)) 'face '(:foreground "green"))))
-      ;;                ;; Line and column numbers
-      ;;                "  "
-      ;;                '(:eval (propertize (format "(%d, %d)" (line-number-at-pos) (current-column))
-      ;;                                    'face '(:foreground "yellow")))
-      ;;                ;; Time
-      ;;                "  "
-      ;;                '(:eval (propertize (format-time-string "%H:%M") 'face '(:foreground "orange"))))))
-  )
+          (use-package telephone-line
+        :ensure t
+        :config 
+        (telephone-line-mode 1)
+        (display-time-mode 1)
+        (timeclock-mode-line-display 1))
+            ;; (use-package powerline
+          ;;     :ensure t
+          ;;     :config
+          ;;     (powerline-default-theme)  ;; Set the default powerline theme
+          ;;     (display-time-mode 1)
+          ;;     (timeclock-mode-line-display 1)
+          ;;     ;; Custom mode line format
+          ;;     ;; (setq-default mode-line-format
+          ;;     ;;               (list
+          ;;     ;;                ;; Buffer name
+          ;;     ;;                '(:eval (propertize (if (buffer-file-name)
+          ;;     ;;                                        (abbreviate-file-name (buffer-file-name))
+          ;;     ;;                                      "%b")  ;; Use buffer name if no file is associated
+          ;;     ;;                                    'face '(:foreground "white" :weight bold)))
+          ;;     ;;                ;; Space
+          ;;     ;;                "  "
+          ;;     ;;                ;; Major mode
+          ;;     ;;                '(:eval (propertize mode-name 'face '(:foreground "lightblue" :weight bold)))
+          ;;     ;;                ;; Space
+          ;;     ;;                "  "
+          ;;     ;;                ;; VC status
+          ;;     ;;                '(:eval (when (and (fboundp 'vc-mode) vc-mode)
+          ;;     ;;                          (propertize (format "[%s]" (vc-working-revision)) 'face '(:foreground "green"))))
+          ;;     ;;                ;; Line and column numbers
+          ;;     ;;                "  "
+          ;;     ;;                '(:eval (propertize (format "(%d, %d)" (line-number-at-pos) (current-column))
+          ;;     ;;                                    'face '(:foreground "yellow")))
+          ;;     ;;                ;; Time
+          ;;     ;;                "  "
+          ;;     ;;                '(:eval (propertize (format-time-string "%H:%M") 'face '(:foreground "orange"))))))
+          ;; )
 #+end_src
 
 You can replace the segments and separators with ones that fit your aesthetic and functional preferences. After saving your configuration, restart Emacs or evaluate the buffer to apply the changes.
@@ -518,8 +525,8 @@ Sets up Org tempo for faster text expansion.
   (use-package company
     :hook (after-init . global-company-mode)
     :config
-    (setq company-minimum-prefix-length 1)
-    (setq company-idle-delay 0.0))
+    (setq company-minimum-prefix-length 3)
+    (setq company-idle-delay 0.5))
 #+end_src
 
 ** Flycheck
