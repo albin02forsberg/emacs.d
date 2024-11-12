@@ -19,6 +19,7 @@
   - [[#dashboard][Dashboard]]
   - [[#modeline][Modeline]]
 - [[#fonts][Fonts]]
+  - [[#font-install][Font install]]
 - [[#graphics][Graphics]]
   - [[#setup-1][Setup]]
   - [[#line-numbers][Line Numbers]]
@@ -73,7 +74,7 @@ This section configures Emacs to use UTF-8 as the default encoding.
 
 ** Set theme
 #+begin_src emacs-lisp
-  (load-theme 'wombat t)
+;;  (load-theme 'wombat t)
 #+end_src
 
 ** Backup dir
@@ -131,7 +132,7 @@ This section configures Elpaca, a package manager for Emacs, enabling easy packa
 Configuration to ensure compatibility with Windows systems that may have issues with symlinks.
 #+begin_src emacs-lisp
   ;; Uncomment for systems that cannot create symlinks
-  (elpaca-no-symlink-mode)
+  ;;(elpaca-no-symlink-mode)
 #+end_src
 
 *** Set Elpaca as Package Manager
@@ -192,8 +193,6 @@ Setting up some keybindings for emacs (not evil)
 #+begin_src emacs-lisp
   (use-package general
     :config
-    (general-evil-setup)
-
     ;; Set up 'SPC' as the global leader key.
     (general-create-definer dt/leader-keys
       :major-modes t
@@ -345,25 +344,34 @@ You can replace the segments and separators with ones that fit your aesthetic an
 
 * Fonts
 Configures font settings. Ensure JetBrains and Ubuntu fonts are installed.
+
+** Font install
+
+#+begin_src shell
+mkdir ~/.local/share/fonts
+cd fonts
+cp * ~/.local/share/fonts
+#+end_src
+
 #+begin_src emacs-lisp
-  (set-face-attribute 'default nil
-                      :font "JetBrains Mono"
-                      :height 110
-                      :weight 'medium)
-  (set-face-attribute 'variable-pitch nil
-                      :font "Ubuntu"
-                      :height 120
-                      :weight 'medium)
-  (set-face-attribute 'fixed-pitch nil
-                      :font "JetBrains Mono"
-                      :height 110
-                      :weight 'medium)
+  ;; (set-face-attribute 'default nil
+  ;;                     :font "JetBrains Mono"
+  ;;                     :height 110
+  ;;                     :weight 'medium)
+  ;; (set-face-attribute 'variable-pitch nil
+  ;;                     :font "Ubuntu"
+  ;;                     :height 120
+  ;;                     :weight 'medium)
+  ;; (set-face-attribute 'fixed-pitch nil
+  ;;                     :font "JetBrains Mono"
+  ;;                     :height 110
+  ;;                     :weight 'medium)
 
-  ;; Italicize comments and keywords.
-  (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
-  (set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
+  ;; ;; Italicize comments and keywords.
+  ;; (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
+  ;; (set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
 
-  (add-to-list 'default-frame-alist '(font . "JetBrains Mono-10"))
+  ;; (add-to-list 'default-frame-alist '(font . "JetBrains Mono-10"))
 
   ;; Uncomment to adjust line spacing if needed.
   ;; (setq-default line-spacing 0.12)				
@@ -412,10 +420,10 @@ Enhances bullet point appearance in Org files.
 
 ** Org modern
 #+begin_src emacs-lisp
-          (use-package org-modern
-        :ensure t
-        :init
-        (with-eval-after-load 'org (global-org-modern-mode)))
+  ;;   (use-package org-modern
+  ;; :ensure t
+  ;; :init
+  ;; (with-eval-after-load 'org (global-org-modern-mode)))
 #+end_src
 ** Org bullets
 #+begin_src emacs-lisp
